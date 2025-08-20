@@ -3,19 +3,16 @@ using UnityEngine;
 public class RotateToPlayer : MonoBehaviour
 {
     public Canvas C;
-    public float RotationsPerSecond;
-
-    private Transform t;
-    private float rotationSpeed;
-
-    private void Start()
-    {
-        t = C.transform;
-    }
-
+    public Transform target;
+    public float RotationSpeed;
     void Update()
     {
-        rotationSpeed = 360 * RotationsPerSecond;
-        t.Rotate(0, rotationSpeed * Time.deltaTime, 0);
+        // Solution from: https://www.reddit.com/r/Unity3D/comments/cj7niq/comment/evbnl0k/        
+        Vector3 playerLookDir = C.transform.position - target.position;
+        float degrees = Mathf.Atan2(playerLookDir.x, playerLookDir.z) * Mathf.Rad2Deg;
+
+        float moveAmount = Mathf.Min(RotationSpeed * Time.deltaTime, 1);
+        Quaternion newRot = Quaternion.Euler(0, degrees, 0);
+        C.transform.rotation = Quaternion.Slerp(C.transform.rotation, newRot, moveAmount);
     }
 }
